@@ -5,10 +5,11 @@ package_name = 'stretch_funmap'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='0.1.0',
     packages=find_packages(),
-    include_package_data=True,  
-    package_data={              
+    python_requires='>=3.10',
+    include_package_data=True,
+    package_data={
         package_name: ['cython_min_cost_path*.so'],
     },
     data_files=[

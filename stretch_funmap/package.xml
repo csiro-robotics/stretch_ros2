@@ -19,6 +19,19 @@
   <depend>tf2</depend>
   <depend>cython3</depend>
 
+  <!-- Python dependencies (rosdep keys). pip-only packages use the -pip
+       convention defined in rosdeps/extra-rosdeps.yaml. -->
+  <depend>cma-pip</depend>
+  <depend>python3-matplotlib</depend>
+  <depend>python3-numba</depend>
+  <depend>python3-numpy</depend>
+  <depend>python3-opencv</depend>
+  <depend>pyquaternion-pip</depend>
+  <depend>python3-yaml</depend>
+  <depend>python3-skimage</depend>
+  <depend>python3-scipy</depend>
+  <depend>python-transforms3d-pip</depend>
+
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
