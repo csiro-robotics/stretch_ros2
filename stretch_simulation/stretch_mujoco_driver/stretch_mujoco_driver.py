@@ -266,35 +266,15 @@ class StretchMujocoDriver(Node):
             elif abs(qpos[Idx.BASE_ROTATE]) > 0.0 and self.robot_mode == "position":
                 self.sim.move_by(Actuators.base_rotate, qpos[Idx.BASE_ROTATE])
 
-            pos = self.gripper_conversion.finger_to_robotis(qpos[Idx.GRIPPER])
-            self.sim.move_to(Actuators.gripper, pos)
+            # stretch_mujoco takes the gripper in finger radians (its "real"
+            # range is -0.376..0.56 rad), not stretch_body's robotis percent,
+            # so pass the joint_pose_cmd value through unconverted.
+            self.sim.move_to(Actuators.gripper, qpos[Idx.GRIPPER])
 
-            for actuator in [
-                Actuators.arm,
-                Actuators.lift,
-                Actuators.wrist_pitch,
-                Actuators.wrist_roll,
-                Actuators.wrist_yaw,
-                Actuators.head_pan,
-                Actuators.head_tilt,
-                Actuators.gripper,
-            ]:
-                succeeded = self.sim.wait_until_at_setpoint(actuator)
-                if not succeeded:
-                    raise Exception(
-                        f"{actuator} failed to move to {self.sim.data_proxies.get_command().move_to[actuator.name]}"
-                    )
-                
-            if self.robot_mode == "position":
-                for actuator in [
-                    Actuators.base_translate,
-                    Actuators.base_rotate,
-                ]:
-                    succeeded = self.sim.wait_while_is_moving(actuator)
-                    if not succeeded:
-                        raise Exception(
-                            f"{actuator} failed to move to {self.sim.data_proxies.get_command().move_to[actuator.name]}"
-                        )
+            # Like stretch_driver, don't wait for the setpoints: streamed
+            # commands must return immediately. Waiting here blocked this
+            # single-threaded node (joint_states included) for up to ~5 s per
+            # message, e.g. whenever the simulated gripper couldn't settle.
 
             self.get_logger().info(f"Moved to position qpos: {qpos}")
         except Exception as e:
